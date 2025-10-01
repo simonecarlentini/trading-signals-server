@@ -1,7 +1,3 @@
-// ============================================
-// TRADING SIGNALS SERVER
-// ============================================
-
 require('dotenv').config();
 const express = require('express');
 const WebSocket = require('ws');
@@ -11,15 +7,12 @@ const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || 'change-this-secret';
 
-// Middleware
 app.use(cors());
 app.use(express.json());
-// Servi l'app web
 app.use(express.static('app'));
 
-// Storage in memoria (per iniziare)
 const users = new Map();
 const signals = [];
 const positions = new Map();
@@ -32,13 +25,11 @@ const activeConnections = new Map();
 app.post('/api/auth/login', async (req, res) => {
     try {
         const { accountNumber, password } = req.body;
-        
         console.log('Login attempt:', accountNumber);
         
         let user = users.get(accountNumber);
         
         if (!user) {
-            // Crea utente demo per test
             const hashedPassword = await bcrypt.hash(password, 10);
             user = {
                 accountNumber,
@@ -76,7 +67,6 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
-// Middleware autenticazione
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -106,8 +96,7 @@ app.get('/api/signals', authenticateToken, (req, res) => {
     res.json(recentSignals);
 });
 
-// Ricevi segnali da MT4
-app.post('/api/signals', express.json(), (req, res) => {
+app.post('/api/signals', (req, res) => {
     try {
         const { apiKey, signal } = req.body;
         
@@ -148,12 +137,17 @@ app.post('/api/signals', express.json(), (req, res) => {
 // ============================================
 
 app.get('/api/positions', authenticateToken, (req, res) => {
-    const accountNumber = req.user.accountNumber;
-    const userPositions = Array.from(positions.values())
-        .filter(p => p.accountNumber === accountNumber);
-    
-    console.log(`User ${accountNumber} has ${userPositions.length} positions`);
-    res.json(userPositions);
+    try {
+        const accountNumber = req.user.accountNumber;
+        const userPositions = Array.from(positions.values())
+            .filter(p => p.accountNumber === accountNumber);
+        
+        console.log(`User ${accountNumber} has ${userPositions.length} positions`);
+        res.json(userPositions);
+    } catch (error) {
+        console.error('Positions error:', error);
+        res.status(500).json({ error: 'Failed to fetch positions' });
+    }
 });
 
 // ============================================
@@ -168,17 +162,19 @@ app.post('/api/trade/open', authenticateToken, async (req, res) => {
         console.log(`Opening trade: ${pair} ${type} ${lots} lots for ${accountNumber}`);
         
         const positionId = Date.now().toString();
+        const basePrice = 3893.45;
+        
         const position = {
             id: positionId,
             accountNumber,
             pair,
             type,
             lots,
-            entryPrice: type === 'BUY' ? 3893.45 : 3893.20,
-            currentPrice: 3893.45,
+            entryPrice: type === 'BUY' ? basePrice : basePrice - 0.25,
+            currentPrice: basePrice,
             profit: 0,
-            stopLoss,
-            takeProfit,
+            stopLoss: stopLoss || null,
+            takeProfit: takeProfit || null,
             openTime: Date.now()
         };
         
@@ -186,6 +182,7 @@ app.post('/api/trade/open', authenticateToken, async (req, res) => {
         
         broadcastPosition(position, accountNumber);
         
+        console.log('Trade opened successfully:', positionId);
         res.json({ success: true, positionId });
     } catch (error) {
         console.error('Trade error:', error);
@@ -285,7 +282,7 @@ function broadcastPosition(position, accountNumber) {
     });
 }
 
-// Aggiorna prezzi (simulato)
+// Aggiorna prezzi posizioni
 setInterval(() => {
     positions.forEach((position, id) => {
         const randomChange = (Math.random() - 0.5) * 2;
@@ -296,6 +293,21 @@ setInterval(() => {
             : position.entryPrice - position.currentPrice;
         
         position.profit = priceDiff * position.lots * 100;
+        
+        // Check SL/TP
+        if (position.stopLoss && 
+            ((position.type === 'BUY' && position.currentPrice <= position.stopLoss) ||
+             (position.type === 'SELL' && position.currentPrice >= position.stopLoss))) {
+            positions.delete(id);
+            return;
+        }
+        
+        if (position.takeProfit &&
+            ((position.type === 'BUY' && position.currentPrice >= position.takeProfit) ||
+             (position.type === 'SELL' && position.currentPrice <= position.takeProfit))) {
+            positions.delete(id);
+            return;
+        }
         
         broadcastPosition(position, position.accountNumber);
     });
@@ -308,7 +320,8 @@ app.get('/api/health', (req, res) => {
         uptime: process.uptime(),
         signals: signals.length,
         positions: positions.size,
-        connections: activeConnections.size
+        connections: activeConnections.size,
+        timestamp: Date.now()
     });
 });
 
