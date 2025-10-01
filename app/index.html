@@ -10,482 +10,90 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.png">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #111827;
-            color: white;
-            overflow-x: hidden;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        /* Header */
-        .header {
-            background: #1f2937;
-            padding: 15px 20px;
-            border-bottom: 1px solid #374151;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header h1 {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .account-info {
-            font-size: 12px;
-            color: #9ca3af;
-            margin-top: 4px;
-        }
-
-        .status-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #22c55e;
-            margin-right: 6px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Login Screen */
-        #loginScreen {
-            padding: 40px 20px;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        #loginScreen h2 {
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-
-        #loginScreen p {
-            text-align: center;
-            color: #9ca3af;
-            margin-bottom: 40px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #9ca3af;
-            font-size: 14px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 15px;
-            background: #1f2937;
-            border: 1px solid #374151;
-            border-radius: 10px;
-            color: white;
-            font-size: 16px;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: #3b82f6;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-            background: #2563eb;
-        }
-
-        .error-message {
-            background: #7f1d1d;
-            color: #fca5a5;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            background: #1f2937;
-            border-bottom: 1px solid #374151;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            background: none;
-            border: none;
-            color: #9ca3af;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .tab.active {
-            color: white;
-        }
-
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: #3b82f6;
-        }
-
-        /* Content */
-        .content {
-            padding: 20px;
-            padding-bottom: 100px;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Signal Card */
-        .signal-card {
-            background: #1f2937;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 2px solid transparent;
-            transition: transform 0.2s;
-        }
-
-        .signal-card.buy {
-            border-color: #22c55e;
-        }
-
-        .signal-card.sell {
-            border-color: #ef4444;
-        }
-
-        .signal-card:active {
-            transform: scale(0.98);
-        }
-
-        .signal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .signal-pair {
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .signal-action {
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .signal-action.buy {
-            background: #22c55e;
-            color: white;
-        }
-
-        .signal-action.sell {
-            background: #ef4444;
-            color: white;
-        }
-
-        .signal-indicators {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .indicator {
-            background: #111827;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .indicator-label {
-            font-size: 11px;
-            color: #9ca3af;
-            margin-bottom: 4px;
-        }
-
-        .indicator-value {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .signal-time {
-            font-size: 12px;
-            color: #6b7280;
-            text-align: right;
-        }
-
-        /* Trading Panel */
-        .trading-panel {
-            background: #1f2937;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-
-        .panel-title {
-            font-size: 14px;
-            color: #9ca3af;
-            margin-bottom: 12px;
-        }
-
-        .current-price {
-            text-align: center;
-            padding: 20px;
-            background: #111827;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .current-price-label {
-            font-size: 12px;
-            color: #9ca3af;
-            margin-bottom: 8px;
-        }
-
-        .current-price-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: #22c55e;
-        }
-
-        .lots-control {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .lots-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            background: #374151;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .lots-btn:active {
-            background: #4b5563;
-        }
-
-        .lots-value {
-            flex: 1;
-            text-align: center;
-            font-size: 28px;
-            font-weight: 700;
-        }
-
-        .sl-tp-inputs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .trade-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .btn-buy {
-            background: #22c55e;
-            color: white;
-        }
-
-        .btn-buy:active {
-            background: #16a34a;
-        }
-
-        .btn-sell {
-            background: #ef4444;
-            color: white;
-        }
-
-        .btn-sell:active {
-            background: #dc2626;
-        }
-
-        /* Position Card */
-        .position-card {
-            background: #1f2937;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-
-        .position-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .position-profit {
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .position-profit.positive {
-            color: #22c55e;
-        }
-
-        .position-profit.negative {
-            color: #ef4444;
-        }
-
-        .position-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .btn-close {
-            background: #ef4444;
-            color: white;
-        }
-
-        .btn-close:active {
-            background: #dc2626;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .empty-state-icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-
-        .empty-state-text {
-            color: #6b7280;
-            font-size: 16px;
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #374151;
-            border-top-color: #3b82f6;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Install Button */
-        #installBtn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 50px;
-            font-weight: 600;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
-            cursor: pointer;
-            display: none;
-            z-index: 1000;
-        }
-
-        #installBtn:active {
-            transform: scale(0.95);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #111827; color: white; overflow-x: hidden; -webkit-user-select: none; user-select: none; }
+        .header { background: #1f2937; padding: 15px 20px; border-bottom: 1px solid #374151; position: sticky; top: 0; z-index: 100; }
+        .header h1 { font-size: 20px; font-weight: 600; }
+        .account-info { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+        .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; margin-right: 6px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        #loginScreen { padding: 40px 20px; max-width: 400px; margin: 0 auto; }
+        #loginScreen h2 { text-align: center; margin-bottom: 10px; font-size: 28px; }
+        #loginScreen p { text-align: center; color: #9ca3af; margin-bottom: 40px; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; color: #9ca3af; font-size: 14px; }
+        .input-group input { width: 100%; padding: 15px; background: #1f2937; border: 1px solid #374151; border-radius: 10px; color: white; font-size: 16px; }
+        .input-group input:focus { outline: none; border-color: #3b82f6; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:active { transform: scale(0.98); background: #2563eb; }
+        .error-message { background: #7f1d1d; color: #fca5a5; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
+        .tabs { display: flex; background: #1f2937; border-bottom: 1px solid #374151; }
+        .tab { flex: 1; padding: 15px; text-align: center; background: none; border: none; color: #9ca3af; font-size: 14px; font-weight: 600; cursor: pointer; position: relative; }
+        .tab.active { color: white; }
+        .tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: #3b82f6; }
+        .content { padding: 20px; padding-bottom: 100px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .signal-card { background: #1f2937; border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 2px solid transparent; transition: transform 0.2s; }
+        .signal-card.buy { border-color: #22c55e; }
+        .signal-card.sell { border-color: #ef4444; }
+        .signal-card:active { transform: scale(0.98); }
+        .signal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .signal-pair { font-size: 20px; font-weight: 700; }
+        .signal-action { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+        .signal-action.buy { background: #22c55e; color: white; }
+        .signal-action.sell { background: #ef4444; color: white; }
+        .signal-indicators { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .indicator { background: #111827; padding: 10px; border-radius: 8px; }
+        .indicator-label { font-size: 11px; color: #9ca3af; margin-bottom: 4px; }
+        .indicator-value { font-size: 16px; font-weight: 600; }
+        .signal-time { font-size: 12px; color: #6b7280; text-align: right; }
+        .trading-panel { background: #1f2937; border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+        .panel-title { font-size: 14px; color: #9ca3af; margin-bottom: 12px; }
+        .current-price { text-align: center; padding: 20px; background: #111827; border-radius: 10px; margin-bottom: 20px; }
+        .current-price-label { font-size: 12px; color: #9ca3af; margin-bottom: 8px; }
+        .current-price-value { font-size: 32px; font-weight: 700; color: #22c55e; }
+        .lots-control { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .lots-btn { width: 50px; height: 50px; border-radius: 10px; background: #374151; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .lots-btn:active { background: #4b5563; }
+        .lots-value { flex: 1; text-align: center; font-size: 28px; font-weight: 700; }
+        .sl-tp-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .trade-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-buy { background: #22c55e; color: white; }
+        .btn-buy:active { background: #16a34a; }
+        .btn-sell { background: #ef4444; color: white; }
+        .btn-sell:active { background: #dc2626; }
+        .position-card { background: #1f2937; border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+        .position-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .position-profit { font-size: 24px; font-weight: 700; }
+        .position-profit.positive { color: #22c55e; }
+        .position-profit.negative { color: #ef4444; }
+        .position-details { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .btn-close { background: #ef4444; color: white; }
+        .btn-close:active { background: #dc2626; }
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-state-icon { font-size: 64px; margin-bottom: 20px; opacity: 0.3; }
+        .empty-state-text { color: #6b7280; font-size: 16px; }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
     <div id="loginScreen">
-        <h2>🚀 Trading Signals</h2>
+        <h2>Trading Signals</h2>
         <p>Accedi al tuo account</p>
-        
         <div id="loginError" class="error-message" style="display: none;"></div>
-        
         <div class="input-group">
             <label>Account Number</label>
             <input type="text" id="accountNumber" value="420019335" placeholder="Inserisci account">
         </div>
-        
         <div class="input-group">
             <label>Password</label>
             <input type="password" id="password" value="test123" placeholder="Inserisci password">
         </div>
-        
         <button class="btn btn-primary" onclick="login()">Accedi</button>
     </div>
 
-    <!-- Main App (hidden initially) -->
     <div id="mainApp" style="display: none;">
-        <!-- Header -->
         <div class="header">
             <h1>Trading Signals</h1>
             <div class="account-info">
@@ -494,21 +102,17 @@
             </div>
         </div>
 
-        <!-- Tabs -->
         <div class="tabs">
             <button class="tab active" onclick="switchTab('signals')">Segnali</button>
             <button class="tab" onclick="switchTab('trading')">Trading</button>
             <button class="tab" onclick="switchTab('positions')">Posizioni</button>
         </div>
 
-        <!-- Content -->
         <div class="content">
-            <!-- Signals Tab -->
             <div id="signalsTab" class="tab-content active">
                 <div id="signalsList"></div>
             </div>
 
-            <!-- Trading Tab -->
             <div id="tradingTab" class="tab-content">
                 <div class="trading-panel">
                     <div class="panel-title">Strumento</div>
@@ -520,12 +124,10 @@
                         <option value="BTCUSD">BTCUSD</option>
                     </select>
                 </div>
-
                 <div class="current-price">
                     <div class="current-price-label">Prezzo Corrente</div>
                     <div class="current-price-value">3893.45</div>
                 </div>
-
                 <div class="trading-panel">
                     <div class="panel-title">Lotti</div>
                     <div class="lots-control">
@@ -534,7 +136,6 @@
                         <button class="lots-btn" onclick="changeLots(0.01)">+</button>
                     </div>
                 </div>
-
                 <div class="trading-panel">
                     <div class="panel-title">Stop Loss & Take Profit</div>
                     <div class="sl-tp-inputs">
@@ -542,71 +143,42 @@
                         <input type="number" id="takeProfit" placeholder="Take Profit" style="padding: 12px; background: #111827; color: white; border: 1px solid #374151; border-radius: 8px;">
                     </div>
                 </div>
-
                 <div class="trade-buttons">
                     <button class="btn btn-buy" onclick="openTrade('BUY')">OPEN BUY</button>
                     <button class="btn btn-sell" onclick="openTrade('SELL')">OPEN SELL</button>
                 </div>
             </div>
 
-            <!-- Positions Tab -->
             <div id="positionsTab" class="tab-content">
                 <div id="positionsList"></div>
             </div>
         </div>
     </div>
 
-    <!-- Install Button -->
-    <button id="installBtn" onclick="installApp()">📱 Installa App</button>
-
     <script>
-        const SERVER_URL = 'https://trading-signals-server.onrender.com/
+        const SERVER_URL = 'https://trading-signals-server.onrender.com';
         let authToken = null;
         let currentLots = 0.01;
         let ws = null;
-        let deferredPrompt = null;
 
-        // PWA Install
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installBtn').style.display = 'block';
-        });
-
-        function installApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    deferredPrompt = null;
-                    document.getElementById('installBtn').style.display = 'none';
-                });
-            }
-        }
-
-        // Login
         async function login() {
             const accountNumber = document.getElementById('accountNumber').value;
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('loginError');
-
             try {
                 const response = await fetch(`${SERVER_URL}/api/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ accountNumber, password })
                 });
-
                 const data = await response.json();
-
                 if (response.ok) {
                     authToken = data.token;
                     localStorage.setItem('authToken', authToken);
                     localStorage.setItem('accountNumber', accountNumber);
-                    
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('mainApp').style.display = 'block';
                     document.getElementById('accountDisplay').textContent = accountNumber;
-                    
                     loadSignals();
                     loadPositions();
                     connectWebSocket();
@@ -620,13 +192,11 @@
             }
         }
 
-        // Load Signals
         async function loadSignals() {
             try {
                 const response = await fetch(`${SERVER_URL}/api/signals`, {
                     headers: { 'Authorization': `Bearer ${authToken}` }
                 });
-
                 const signals = await response.json();
                 displaySignals(signals);
             } catch (error) {
@@ -636,17 +206,10 @@
 
         function displaySignals(signals) {
             const container = document.getElementById('signalsList');
-            
             if (signals.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📊</div>
-                        <div class="empty-state-text">Nessun segnale disponibile</div>
-                    </div>
-                `;
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><div class="empty-state-text">Nessun segnale disponibile</div></div>';
                 return;
             }
-
             container.innerHTML = signals.map(signal => `
                 <div class="signal-card ${signal.action.toLowerCase()}">
                     <div class="signal-header">
@@ -654,27 +217,19 @@
                         <div class="signal-action ${signal.action.toLowerCase()}">${signal.action}</div>
                     </div>
                     <div class="signal-indicators">
-                        <div class="indicator">
-                            <div class="indicator-label">RSI(14)</div>
-                            <div class="indicator-value">${signal.rsi.toFixed(1)}</div>
-                        </div>
-                        <div class="indicator">
-                            <div class="indicator-label">MACD</div>
-                            <div class="indicator-value">${signal.macd.toFixed(1)}</div>
-                        </div>
+                        <div class="indicator"><div class="indicator-label">RSI(14)</div><div class="indicator-value">${signal.rsi.toFixed(1)}</div></div>
+                        <div class="indicator"><div class="indicator-label">MACD</div><div class="indicator-value">${signal.macd.toFixed(1)}</div></div>
                     </div>
                     <div class="signal-time">${new Date(signal.timestamp).toLocaleTimeString()}</div>
                 </div>
             `).join('');
         }
 
-        // Load Positions
         async function loadPositions() {
             try {
                 const response = await fetch(`${SERVER_URL}/api/positions`, {
                     headers: { 'Authorization': `Bearer ${authToken}` }
                 });
-
                 const positions = await response.json();
                 displayPositions(positions);
             } catch (error) {
@@ -684,156 +239,100 @@
 
         function displayPositions(positions) {
             const container = document.getElementById('positionsList');
-            
             if (positions.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📈</div>
-                        <div class="empty-state-text">Nessuna posizione aperta</div>
-                    </div>
-                `;
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📈</div><div class="empty-state-text">Nessuna posizione aperta</div></div>';
                 return;
             }
-
             container.innerHTML = positions.map(pos => `
                 <div class="position-card">
                     <div class="position-header">
-                        <div>
-                            <div style="font-size: 18px; font-weight: 700;">${pos.pair}</div>
-                            <div style="font-size: 14px; color: ${pos.type === 'BUY' ? '#22c55e' : '#ef4444'};">
-                                ${pos.type} ${pos.lots} lotti
-                            </div>
-                        </div>
-                        <div class="position-profit ${pos.profit >= 0 ? 'positive' : 'negative'}">
-                            ${pos.profit >= 0 ? '+' : ''}$${pos.profit.toFixed(2)}
-                        </div>
+                        <div><div style="font-size: 18px; font-weight: 700;">${pos.pair}</div><div style="font-size: 14px; color: ${pos.type === 'BUY' ? '#22c55e' : '#ef4444'};">${pos.type} ${pos.lots} lotti</div></div>
+                        <div class="position-profit ${pos.profit >= 0 ? 'positive' : 'negative'}">${pos.profit >= 0 ? '+' : ''}$${pos.profit.toFixed(2)}</div>
                     </div>
                     <div class="position-details">
-                        <div class="indicator">
-                            <div class="indicator-label">Entry</div>
-                            <div class="indicator-value" style="font-size: 14px;">${pos.entryPrice.toFixed(2)}</div>
-                        </div>
-                        <div class="indicator">
-                            <div class="indicator-label">Current</div>
-                            <div class="indicator-value" style="font-size: 14px;">${pos.currentPrice.toFixed(2)}</div>
-                        </div>
-                        <div class="indicator">
-                            <div class="indicator-label">Pips</div>
-                            <div class="indicator-value" style="font-size: 14px;">${((pos.currentPrice - pos.entryPrice) * 100).toFixed(1)}</div>
-                        </div>
+                        <div class="indicator"><div class="indicator-label">Entry</div><div class="indicator-value" style="font-size: 14px;">${pos.entryPrice.toFixed(2)}</div></div>
+                        <div class="indicator"><div class="indicator-label">Current</div><div class="indicator-value" style="font-size: 14px;">${pos.currentPrice.toFixed(2)}</div></div>
+                        <div class="indicator"><div class="indicator-label">Pips</div><div class="indicator-value" style="font-size: 14px;">${((pos.currentPrice - pos.entryPrice) * 100).toFixed(1)}</div></div>
                     </div>
                     <button class="btn btn-close" onclick="closePosition('${pos.id}')">Chiudi Posizione</button>
                 </div>
             `).join('');
         }
 
-        // Open Trade
         async function openTrade(type) {
             const pair = document.getElementById('pairSelect').value;
             const lots = currentLots;
             const stopLoss = parseFloat(document.getElementById('stopLoss').value) || null;
             const takeProfit = parseFloat(document.getElementById('takeProfit').value) || null;
-
-            if (!confirm(`Confermi apertura ${type} ${lots} lotti su ${pair}?`)) {
-                return;
-            }
-
+            if (!confirm(`Confermi apertura ${type} ${lots} lotti su ${pair}?`)) return;
             try {
                 const response = await fetch(`${SERVER_URL}/api/trade/open`, {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`,
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ pair, type, lots, stopLoss, takeProfit })
                 });
-
                 if (response.ok) {
-                    alert('✅ Trade aperto con successo!');
+                    alert('Trade aperto!');
                     loadPositions();
                     switchTab('positions');
                 } else {
-                    alert('❌ Errore apertura trade');
+                    alert('Errore apertura trade');
                 }
             } catch (error) {
-                alert('❌ Errore di connessione');
+                alert('Errore connessione');
             }
         }
 
-        // Close Position
         async function closePosition(positionId) {
-            if (!confirm('Confermi chiusura posizione?')) {
-                return;
-            }
-
+            if (!confirm('Confermi chiusura?')) return;
             try {
                 const response = await fetch(`${SERVER_URL}/api/trade/close/${positionId}`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${authToken}` }
                 });
-
                 if (response.ok) {
-                    alert('✅ Posizione chiusa!');
+                    alert('Posizione chiusa!');
                     loadPositions();
-                } else {
-                    alert('❌ Errore chiusura posizione');
                 }
             } catch (error) {
-                alert('❌ Errore di connessione');
+                alert('Errore connessione');
             }
         }
 
-        // Lots Control
         function changeLots(amount) {
             currentLots = Math.max(0.01, currentLots + amount);
             currentLots = Math.round(currentLots * 100) / 100;
             document.getElementById('lotsValue').textContent = currentLots.toFixed(2);
         }
 
-        // Tab Switching
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
             event.target.classList.add('active');
             document.getElementById(tabName + 'Tab').classList.add('active');
-
             if (tabName === 'signals') loadSignals();
             if (tabName === 'positions') loadPositions();
         }
 
-        // WebSocket
         function connectWebSocket() {
-            ws = new WebSocket(`ws://localhost:3000?token=${authToken}`);
-            
+            const wsUrl = SERVER_URL.replace('https://', 'wss://').replace('http://', 'ws://');
+            ws = new WebSocket(`${wsUrl}?token=${authToken}`);
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-                
-                if (data.type === 'signal') {
-                    loadSignals();
-                }
-                
-                if (data.type === 'position') {
-                    loadPositions();
-                }
+                if (data.type === 'signal') loadSignals();
+                if (data.type === 'position') loadPositions();
             };
-
-            ws.onclose = () => {
-                setTimeout(connectWebSocket, 3000);
-            };
+            ws.onclose = () => setTimeout(connectWebSocket, 3000);
         }
 
-        // Auto-login if token exists
         window.addEventListener('load', () => {
             const savedToken = localStorage.getItem('authToken');
             const savedAccount = localStorage.getItem('accountNumber');
-            
             if (savedToken && savedAccount) {
                 authToken = savedToken;
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
                 document.getElementById('accountDisplay').textContent = savedAccount;
-                
                 loadSignals();
                 loadPositions();
                 connectWebSocket();
